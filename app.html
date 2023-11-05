@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Secret Santa Generator</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+        }
+        input {
+            margin-bottom: 10px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Secret Santa Generator</h1>
+    <form id="assignmentForm">
+        <input type="text" id="participant" name="participant" placeholder="Enter your name"><br>
+        <input type="email" id="email" name="email" placeholder="Enter your email"><br>
+        <button type="button" onclick="generateReceiver()">Generate Receiver</button>
+        <p id="receiver"></p>
+    </form>
+
+    <script>
+        const assignedReceivers = new Set();
+        let assignmentsRemaining = 1;
+
+        function generateReceiver() {
+            if (assignmentsRemaining === 0) {
+                alert("You have already received your assignment.");
+                return;
+            }
+
+            const participant = document.getElementById('participant').value;
+            const email = document.getElementById('email').value; // Retrieve email
+
+            let receiver = generateUniqueReceiver(participant);
+            document.getElementById('receiver').textContent = `Your assigned receiver is: ${receiver}`;
+
+            document.getElementById('participant').disabled = true;
+            document.getElementById('email').disabled = true; // Disable email field
+            document.querySelector('button').disabled = true;
+
+            // Simulate form submission (Replace this with your actual form submission logic)
+            setTimeout(() => {
+                submitAssignment(participant, email, receiver); // Function to submit assignment details
+            }, 3000); // Simulate submission after 3 seconds
+        }
+
+        function generateUniqueReceiver(participant) {
+            let possibleReceivers = ['Alice', 'Bob', 'Charlie', 'David', 'Eve'];
+
+            for (const receiver of assignedReceivers) {
+                const index = possibleReceivers.indexOf(receiver);
+                if (index > -1) {
+                    possibleReceivers.splice(index, 1);
+                }
+            }
+
+            for (let i = possibleReceivers.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [possibleReceivers[i], possibleReceivers[j]] = [possibleReceivers[j], possibleReceivers[i]];
+            }
+
+            let receiver = possibleReceivers[0];
+            assignedReceivers.add(receiver);
+            assignmentsRemaining--;
+            return receiver;
+        }
+
+        function submitAssignment(participant, email, receiver) {
+            // Here you can make an AJAX request to send the assignment details to a server
+            // Replace the placeholder logic with your actual implementation
+            console.log(`Sending assignment details: Participant: ${participant}, Email: ${email}, Receiver: ${receiver}`);
+            // Example AJAX request using fetch:
+            /*
+            fetch('https://yourserver.com/assignment', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ participant, email, receiver }),
+            })
+            .then(response => {
+                if (response.ok) {
+                    console.log('Assignment details sent successfully.');
+                } else {
+                    console.log('Failed to send assignment details.');
+                }
+            })
+            .catch(error => console.error('Error:', error));
+            */
+        }
+    </script>
+</body>
+</html>
+
